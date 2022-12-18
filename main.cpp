@@ -7,18 +7,38 @@
 #include "Grove_LCD_RGB_Backlight.h"
 
 #define WAIT_TIME_MS 500 
-DigitalOut led1(LED1);
+DigitalIn boton(D4);
 Grove_LCD_RGB_Backlight rgbLCD(PB_9,PB_8);
+Timer timer;
+float tiempo;
+char tiempo_pantalla[10];
+
+float funcion(){
+    timer.reset();
+    timer.start();
+    while(boton==1||timer.elapsed_time().count()<100){
+
+    }
+    timer.stop();
+    tiempo=timer.elapsed_time().count()/1000000;
+    return tiempo;
+}
 
 int main()
 {
-    printf("This is the bare metal blinky example running on Mbed OS %d.%d.%d.\n", MBED_MAJOR_VERSION, MBED_MINOR_VERSION, MBED_PATCH_VERSION);
-
     while (true)
-    {
+    {   
+        if(boton==1){
+            funcion();
+        }
         rgbLCD.setRGB(0xff, 0xff, 0xff);                 //set the color 
-        rgbLCD.print("Hello World!");
-        led1 = !led1;
+        rgbLCD.locate(0,0);
+        rgbLCD.print("Tiempo pulsado=");
+        rgbLCD.locate(0,1);
+        sprintf(tiempo_pantalla, "%f" ,tiempo);
+        rgbLCD.print(tiempo_pantalla);
+        rgbLCD.locate(14,1);
+        rgbLCD.print("s");
         thread_sleep_for(WAIT_TIME_MS);
     }
 }
